@@ -45,7 +45,7 @@ async def get_sub_time(q_query: CallbackQuery, state: FSMContext):
 
     await database.add_subscription(
         tg_user_id=q_query.from_user.id,
-        time=misc.time_dict.get(q_query.data))
+        pause_between_sending=misc.time_dict.get(q_query.data))
     await state.clear()
     await other.infinite_send_exchange(q_query.from_user.id)
 
