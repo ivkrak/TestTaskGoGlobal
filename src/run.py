@@ -4,7 +4,7 @@ from aiogram import Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 import database
 
-from handlers import start, users
+from handlers import start, users, other
 from misc import bot, logger
 
 
@@ -15,7 +15,7 @@ async def main():
         start.router,
         users.router
     )
-
+    await other.run_exchange_tasks()
     await database.create_tables()
     await dp.start_polling(bot)
 

@@ -1,8 +1,8 @@
-import datetime
+import time
 
 from misc import logger
 from .models import User, async_session_maker, engine, Base, ExchangeHistory
-from sqlalchemy import update
+from sqlalchemy import update, insert, select
 
 
 @logger.catch
@@ -67,11 +67,21 @@ async def add_exchange_request(tg_user_id: int, exchange: float) -> None:
     """
     Добавляет информацию о запросе курса
     """
-    logger.info('Курс добавлен')
+    logger.info('Курс добавлен в базу')
     async with async_session_maker() as session:
-        session.add(ExchangeHistory(
+        stmt = insert(ExchangeHistory).values(
             tg_user_id=tg_user_id,
-            request_time=datetime.datetime.now,
-            exchange=exchange
-        ))
+            exchange=exchange,
+            request_time=time.time()
+        )
+        await session.execute(stmt)
+        await session.commit()
     await session.commit()
+
+
+@logger.catch
+async def get_user_ids():
+    async with async_session_maker() as session:
+        query = select(User.tg_user_id).where(User.subscribe > 0)
+        result = await session.execute(query)
+        return result.fetchall()

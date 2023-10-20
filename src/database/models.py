@@ -1,6 +1,6 @@
 import os
-import datetime
-from sqlalchemy import BigInteger, Column, String, Integer, DateTime, Float
+
+from sqlalchemy import BigInteger, Column, String, Integer, Float
 from sqlalchemy import MetaData
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
@@ -25,6 +25,7 @@ class User(Base):
 
 class ExchangeHistory(Base):
     __tablename__ = 'exchange_history'
-    tg_user_id = Column(BigInteger, primary_key=True)
-    request_time = Column(Integer, default=0)
+    id = Column(Integer, primary_key=True,  autoincrement=True)
+    tg_user_id = Column(BigInteger)
+    request_time = Column(Float)
     exchange = Column(Float)

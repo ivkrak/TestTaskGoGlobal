@@ -10,4 +10,4 @@ async def get_dollar_exchange() -> float:
         async with session.get('https://api.coinbase.com/v2/prices/USD-RUB/spot') as response:
             resp = await response.text()
             resp = json.loads(resp)
-    return round(float(resp["data"]["amount"]))
+    return round(float(resp["data"]["amount"]), 2)
