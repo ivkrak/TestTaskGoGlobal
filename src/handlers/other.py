@@ -44,10 +44,13 @@ async def infinite_send_exchange(tg_user_id: int):
         if time == 0:
             break
         await send_exchange(tg_user_id=tg_user_id)
-        await asyncio.sleep(time)
+        for _ in range(int(time / 5)):
+            await asyncio.sleep(5)
+            if await database.get_subscription_time(tg_user_id=tg_user_id):
+                return
 
 
-# @logger.catch
+@logger.catch
 async def send_exchange_history(tg_user_id: int):
     """
     Отправляет историю запросов курса доллара пользователю
