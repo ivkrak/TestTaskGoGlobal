@@ -1,9 +1,11 @@
+import datetime
+import asyncio
 import database
 from misc import logger
 import misc
 from misc import bot
-
-import asyncio
+from pathlib import Path
+from aiogram.types import FSInputFile
 
 
 @logger.catch
@@ -17,9 +19,13 @@ async def send_exchange(tg_user_id: int):
 
 
 async def run_exchange_tasks():
-    # logger.info(f'{(await database.get_user_ids())=}')
-    for tg_id in (await database.get_user_ids()):
+    tg_ids = (await database.get_user_ids())
+    if tg_ids is None:
+        logger.info('Задачи по получению курса доллара запущены')
+        return
+    for tg_id in tg_ids:
         asyncio.create_task(infinite_send_exchange(tg_id[0]))
+    logger.info('Задачи по получению курса доллара запущены')
 
 
 @logger.catch
@@ -30,3 +36,20 @@ async def infinite_send_exchange(tg_user_id: int):
             break
         await send_exchange(tg_user_id=tg_user_id)
         await asyncio.sleep(time)
+
+
+# @logger.catch
+async def send_exchange_history(tg_user_id: int):
+    history = await database.get_exchange_history(tg_user_id=tg_user_id)
+    history_text = 'Время запроса курса доллара\tКурс доллара\n'
+    for r in history:
+        history_text += f'{datetime.datetime.fromtimestamp(r[0]).strftime("%Y-%m-%d %H:%M:%S")}\t{r[1]}\n'
+    with open(f'exchange_history_files/{tg_user_id}_history.txt', 'w') as f:
+        f.write(history_text)
+    logger.info(Path(f'exchange_history_files/{tg_user_id}_history.txt'))
+    document = FSInputFile(f'exchange_history_files/{tg_user_id}_history.txt', filename='history.txt')
+    await bot.send_document(
+        chat_id=tg_user_id,
+        document=document,
+        caption='История запросов курса доллара'
+    )

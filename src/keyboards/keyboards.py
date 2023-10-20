@@ -5,7 +5,8 @@ menu_kb = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text='Получить курс 💵')],
         [KeyboardButton(text='Подписаться на курс 💵')],
-        [KeyboardButton(text='Отменить подписку 💵')]
+        [KeyboardButton(text='Отменить подписку 💵')],
+        [KeyboardButton(text='Получить историю запросов курса 💵')]
     ],
     resize_keyboard=True
 )

@@ -16,6 +16,7 @@ async def main():
         users.router
     )
     await other.run_exchange_tasks()
+    await database.get_exchange_history(351162658)
     await database.create_tables()
     await dp.start_polling(bot)
 

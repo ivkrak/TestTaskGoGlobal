@@ -72,7 +72,7 @@ async def add_exchange_request(tg_user_id: int, exchange: float) -> None:
         stmt = insert(ExchangeHistory).values(
             tg_user_id=tg_user_id,
             exchange=exchange,
-            request_time=time.time()
+            request_time=round(time.time(), 3)
         )
         await session.execute(stmt)
         await session.commit()
@@ -83,5 +83,14 @@ async def add_exchange_request(tg_user_id: int, exchange: float) -> None:
 async def get_user_ids():
     async with async_session_maker() as session:
         query = select(User.tg_user_id).where(User.subscribe > 0)
+        result = await session.execute(query)
+        return result.fetchall()
+
+
+@logger.catch
+async def get_exchange_history(tg_user_id: int):
+    async with (async_session_maker() as session):
+        query = select(ExchangeHistory.request_time, ExchangeHistory.exchange).\
+            where(ExchangeHistory.tg_user_id == tg_user_id)
         result = await session.execute(query)
         return result.fetchall()

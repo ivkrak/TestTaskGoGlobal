@@ -7,7 +7,9 @@ import database
 import keyboards
 from misc import logger
 import misc
+from . import other
 from .other import send_exchange
+
 router = Router()
 
 
@@ -45,6 +47,7 @@ async def get_sub_time(q_query: CallbackQuery, state: FSMContext):
         tg_user_id=q_query.from_user.id,
         time=misc.time_dict.get(q_query.data))
     await state.clear()
+    await other.infinite_send_exchange(q_query.from_user.id)
 
 
 @router.message(F.text == 'Отменить подписку 💵', F.chat.type == 'private')
@@ -55,3 +58,10 @@ async def sud_to_exchange(message: Message):
         text='Подписка на курс доллара отменена'
     )
     await database.remove_subscription(tg_user_id=message.from_user.id)
+
+
+@router.message(F.text == 'Получить историю запросов курса 💵', F.chat.type == 'private')
+@logger.catch
+async def get_exchange_history(message: Message):
+    logger.info(f'Пользователь {message.from_user.full_name} узнал историю запросов курса доллара')
+    await other.send_exchange_history(message.from_user.id)
