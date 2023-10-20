@@ -81,6 +81,9 @@ async def add_exchange_request(tg_user_id: int, exchange: float) -> None:
 
 @logger.catch
 async def get_user_ids():
+    """
+    Получает tg_id всех пользователей, может использоваться при рассылке рекламы
+    """
     async with async_session_maker() as session:
         query = select(User.tg_user_id).where(User.subscribe > 0)
         result = await session.execute(query)
@@ -89,6 +92,9 @@ async def get_user_ids():
 
 @logger.catch
 async def get_exchange_history(tg_user_id: int):
+    """
+    Получить историю запросов курса доллара для конкретного пользователя.
+    """
     async with (async_session_maker() as session):
         query = select(ExchangeHistory.request_time, ExchangeHistory.exchange).\
             where(ExchangeHistory.tg_user_id == tg_user_id)

@@ -38,6 +38,9 @@ async def sud_to_exchange(message: Message, state: FSMContext):
 @router.callback_query()
 @logger.catch
 async def get_sub_time(q_query: CallbackQuery, state: FSMContext):
+    """
+    Получает время между сообщениями на курс доллара
+    """
     logger.info(f'Пользователь выбрал раз в {q_query.data}')
     await q_query.message.answer(
         text='Отлично, подписка на курс доллара оформлена'

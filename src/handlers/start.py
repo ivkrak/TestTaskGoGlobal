@@ -18,6 +18,6 @@ async def start(message: Message):
     )
     await database.add_user(
         tg_user_id=message.from_user.id,
-          tg_name=message.from_user.full_name
+        tg_name=message.from_user.full_name
     )
     

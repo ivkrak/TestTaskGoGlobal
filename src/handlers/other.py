@@ -10,6 +10,9 @@ from aiogram.types import FSInputFile
 
 @logger.catch
 async def send_exchange(tg_user_id: int):
+    """
+    Отправляет курс доллара в телеграм-бот юзеру.
+    """
     exchange = await misc.get_dollar_exchange()
     await bot.send_message(
         chat_id=tg_user_id,
@@ -19,6 +22,9 @@ async def send_exchange(tg_user_id: int):
 
 
 async def run_exchange_tasks():
+    """
+    Запускает задачи по отправке курса доллара юзерам, нужно при ребуте сервера.
+    """
     tg_ids = (await database.get_user_ids())
     if tg_ids is None:
         logger.info('Задачи по получению курса доллара запущены')
@@ -30,6 +36,9 @@ async def run_exchange_tasks():
 
 @logger.catch
 async def infinite_send_exchange(tg_user_id: int):
+    """
+    Запускает задачу по отправке курса раз в какое-то время
+    """
     while True:
         time = await database.get_subscription_time(tg_user_id=tg_user_id)
         if time == 0:
@@ -40,6 +49,9 @@ async def infinite_send_exchange(tg_user_id: int):
 
 # @logger.catch
 async def send_exchange_history(tg_user_id: int):
+    """
+    Отправляет историю запросов курса доллара пользователю
+    """
     history = await database.get_exchange_history(tg_user_id=tg_user_id)
     history_text = 'Время запроса курса доллара\tКурс доллара\n'
     for r in history:
