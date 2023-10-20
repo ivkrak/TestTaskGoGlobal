@@ -29,13 +29,13 @@ async def add_user(tg_user_id: int, tg_name: str) -> None:
 
 
 @logger.catch
-async def add_subscription(tg_user_id: int, time: int):
+async def add_subscription(tg_user_id: int, pause_between_sending: int):
     """
     Добавляет информацию, о том, что пользователь подписался на уведомления
     """
     async with async_session_maker() as session:
         await session.execute(
-            update(User).where(User.tg_user_id == tg_user_id).values(subscribe=time)  # NOQA
+            update(User).where(User.tg_user_id == tg_user_id).values(subscribe=pause_between_sending)  # NOQA
         )
         await session.commit()
 
